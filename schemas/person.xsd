@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--XS prefix bound to http://www.w3.org/2001/XMLSchema default ns is www.w3schools... -->
+<!--Xml is the carrier for xsd (created by w3) => XML will be parsed and converted into something else (e.g. XML infoset) => Then, that infoset (or something else) is passed to the XSD processor, which starts from anew, and it must have all the necessary information at hand. So, the targetNamespace will be the only thing to tell it about the target namespace of that XML schema!-->
+<!-- targetNamepsace is xsd specific and necessary It specifies, which namespace the XML elements described by the schema will belong to., xmlns is xml specific -->
+<!--
+Important usage of xsd namespace: when you use the datatype ex: <xsd:element name="date" type="xsd:dateTime" /> you need to have declared the xmlns:xsd="w3..." however if you did not include xmlns:xsd it would look like this <element name="date" type="dateTime" />, notice its related to xml not really xsd 
+
+-->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:common="kevingomez.co/person" targetNamespace="kevingomez.co/person">
+    
+    <!--Xsd elements can be simpleType, complexType, or anyType 
+    - simpleType can only contain text: it cannot contain other elements or attributes (the text can be any xsd data type) and we add restrictions (facets) to limit its content or you can require the data to follow a simple pattern...  
+    -->
+    <!--A note on global elements: global elements are basically root elements or the most outter element...
+    <xsd:element ref="Column01" minOccurs="0"/>
+    Column01 has been defined somewhere else in the schema, based on a ref. This style is uncommon because the referenced names must have a scope that is global to the whole namespace used in the schema. As you can imagine, this requires all names to be unique. Ensuring uniqueness can be tedious in large schemas and can lead to some awkward names. It is, however, one way to ensure that names are globally unique and that things that are named the same actually
+
+    - use ref for actual elements, like a copy/paste but you get this global problem...
+    - use type for complex types, simple types, etc
+    -->
+    <xsd:element name="person">
+        <xsd:complexType>
+            <xsd:sequence>
+                <xsd:element name="firstName" type="xsd:string"/>
+                <xsd:element name="gender" type="common:gender" minOccurs="0"/>
+                <xsd:element name="age" type="common:age" minOccurs="0"/>
+                <xsd:element name="aliases" type="common:aliases" minOccurs="0"/>
+            </xsd:sequence>
+        </xsd:complexType>
+    </xsd:element>
+    <!--Simple types: can include a defualt value, fixed value (cannot change), and can include restrictions-->
+    <xsd:simpleType name="gender">
+        <xsd:restriction base="xsd:string">
+            <xsd:enumeration value="M"/>
+            <xsd:enumeration value="F"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <!--Simple type restriction on an int-->
+    <xsd:simpleType name="age">
+        <xsd:restriction base="xsd:integer">
+             <xsd:minInclusive value="0"/>
+             <xsd:maxInclusive value="120"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+
+    <!--Simple type restriction on regex-->
+    <xsd:simpleType name="initials">
+        <xsd:restriction base="xsd:string">
+            <xsd:pattern value="[A-Z][A-Z][A-Z]"/>
+        </xsd:restriction>
+    </xsd:simpleType>
+    <!--complex type string list example sequence <xsd:sequence> specifies child elements can only appear in the order mentioned.-->
+    <xsd:complexType name="aliases">
+        <xsd:sequence>
+            <xsd:element name="alias" type="xsd:string" minOccurs="0" maxOccurs="unbounded" />
+        </xsd:sequence>
+    </xsd:complexType>
+    <!--complex type string list example sequence <xsd:all> specifies that the child elements can appear in any order.-->
+    <!--Use xsd:choice when one of the child element must be present.-->
+    <!--Compile this using xjc...-->
+</xsd:schema>
